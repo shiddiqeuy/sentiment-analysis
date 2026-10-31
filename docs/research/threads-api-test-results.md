@@ -16,7 +16,15 @@ Dijalankan 2026-10-31 lewat Graph API Explorer, app `threads-sentiment-analysis`
 | P5 | `since=2026-10-28&until=2026-10-30&limit=10&fields=id,timestamp` | Diterima dan memfilter. Hanya post tanggal 28 dan 29 Oktober yang kembali; post 30 Oktober tidak ikut (`until` tampak eksklusif pada tanggal tersebut) | fakta |
 | P5b | `limit=500&fields=id` | Diterima tanpa error. Jumlah post yang kembali tidak dihitung, jadi batas maksimum sebenarnya belum diketahui | fakta; batas maks = terbuka |
 
+| T2 | `keyword_search?q=kopi` (kata umum, tanpa `author_username`), izin `threads_keyword_search` ditambahkan, mode development | Berhasil, 2,7 detik, mengembalikan daftar `id`. Dengan `fields=username,...`, dua hasil teratas semuanya dari akun tester (`shiddiqazis`), bukan akun lain | fakta |
+| T2b | `keyword_search?q=threads&author_username=threads` (filter ke akun lain) | Filter tidak berlaku: semua hasil tetap dari akun tester sendiri. Tidak ada error | fakta |
+| T3 | Field di `keyword_search` | `id`, `username`, `timestamp`, `media_type`, `topic_tag`, `has_replies`, `is_quote_post` diterima | fakta |
+| T7 (parsial) | Kedalaman riwayat | Post milik sendiri dari 2026-05-26 muncul, jadi riwayat minimal 5 bulan ke belakang | fakta; batas maksimum = terbuka |
+
 ## Temuan tambahan
+
+- **[fakta]** Di mode development tanpa App Review, `keyword_search` hanya mengembalikan post milik akun tester sendiri; post akun lain tidak muncul. Ini selaras dengan dokumentasi (riset awal). Untuk memantau percakapan publik tentang produk, App Review dan Advanced Access untuk `threads_keyword_search` wajib.
+- **[fakta]** Setelah izin baru ditambahkan, Explorer butuh beberapa kali percobaan dan persetujuan pengguna sebelum token yang mencakup izin itu terbit.
 
 - **[fakta]** Host di Graph API Explorer bernama `threads.net` (mis. `graph.threads.net/v1.0`); dokumentasi menyebut `graph.threads.com`. Explorer menyediakan tombol "Generate Threads Access Token", sehingga token pertama tidak membutuhkan alur OAuth manual.
 - **[fakta]** Default `profile_posts` hanya mengembalikan `id`; field lain harus diminta lewat `fields=`.
@@ -33,5 +41,5 @@ Dijalankan 2026-10-31 lewat Graph API Explorer, app `threads-sentiment-analysis`
 
 - Batas `limit` maksimum yang sebenarnya, kedalaman riwayat (sejauh mana `since` bisa mundur), P7 akun di bawah 100 followers.
 - P8 header rate limit: Explorer tidak menampilkan header respons; perlu curl atau PowerShell dengan token.
-- `keyword_search` (T1 sampai T11): izin `threads_keyword_search` belum ditambahkan ke app.
+- `keyword_search` yang belum diuji: T4 (TOP vs RECENT), T5 (`search_mode=TAG`), T6 (paginasi), T8 (`media_type`), T9 (kuota), T11 (akun privat). T1 praktis tercakup oleh T2 (post sendiri terbaca).
 - Perilaku post terhapus (T10).
