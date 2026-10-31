@@ -17,6 +17,23 @@ import urllib.parse
 import urllib.request
 from pathlib import Path
 
+def load_env(path):
+    """Muat KEY=VALUE dari berkas .env ke os.environ. Variabel yang sudah diset
+    di shell tidak ditimpa. Nilai tidak pernah dicetak."""
+    p = Path(path)
+    if not p.is_file():
+        return
+    for line in p.read_text(encoding="utf-8-sig").splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, _, val = line.partition("=")
+        val = val.strip().strip("'\"")
+        if key.strip() and val:
+            os.environ.setdefault(key.strip(), val)
+
+
+load_env(Path(__file__).resolve().parent.parent / ".env")  # .env di root repo
 BASE = os.environ.get("THREADS_API_BASE", "https://graph.threads.com/v1.0").rstrip("/")
 
 # [asumsi] nama field; yang diverifikasi di uji: lihat docs/research/threads-api-test-results.md
