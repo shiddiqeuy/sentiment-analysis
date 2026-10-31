@@ -15,10 +15,47 @@ Dasar endpoint dan parameter: `docs/research/threads-api-open-questions.md` bagi
 
 1. Buat app di developers.facebook.com, tambahkan use case Threads API.
 2. Tambahkan akun Threads sendiri sebagai Threads Tester atau role-holder.
-3. Minta izin `threads_basic` dan `threads_keyword_search`, lalu ambil access token lewat alur OAuth.
+3. Tambahkan izin `threads_basic` dan `threads_profile_discovery` (fase 0), serta `threads_keyword_search` (fase berikutnya), lalu ambil access token lewat alur OAuth.
 4. **[terbuka]** Apakah Graph API Explorer mendukung host `graph.threads.com`. Bila tidak, pakai curl atau Postman dengan token yang sama.
 
-## Skenario uji
+## Alur token Threads (diakses 2026-10-31)
+
+Sumber primer (dibaca lewat alat fetch yang meringkas; kutipan bukan salinan manusia):
+- https://developers.facebook.com/documentation/threads/get-started
+- https://developers.facebook.com/documentation/threads/get-started/get-access-tokens-and-permissions
+- https://developers.facebook.com/documentation/threads/get-started/long-lived-tokens
+- https://developers.facebook.com/documentation/development/create-an-app/threads-use-case
+- https://developers.facebook.com/documentation/threads/threads-profiles
+
+1. **[fakta]** Tester: Dashboard > App roles > Roles > Add People > Threads Tester. Undangan diterima di Threads: Account Settings > Website permissions (https://www.threads.com/settings/account).
+2. **[fakta]** Otorisasi: buka `https://threads.com/oauth/authorize` dengan `client_id` (Threads App ID), `redirect_uri`, `scope` (`threads_basic` wajib), `response_type=code`, `state` opsional. `code` berlaku 1 jam, sekali pakai.
+3. **[fakta]** Tukar code: `POST https://graph.threads.com/oauth/access_token` (form: `client_id`, `client_secret`, `grant_type=authorization_code`, `redirect_uri`, `code`). Hasilnya short-lived token, berlaku 1 jam.
+4. **[fakta]** Long-lived: `GET https://graph.threads.com/access_token?grant_type=th_exchange_token&...`, dilakukan di server, berlaku 60 hari. Refresh lewat `refresh_access_token?grant_type=th_refresh_token`, token minimal berumur 24 jam.
+5. **[fakta]** `redirect_uri` harus cocok dengan daftar Valid OAuth Redirect URIs di Settings > Client OAuth Settings. Persyaratan HTTPS dan penggunaan localhost **[terbuka]** (tidak disebut).
+6. **[fakta]** Threads App ID dan Threads App secret ada di App settings > Basic. Secret hanya di variabel lingkungan, tidak di berkas, chat, atau commit.
+7. **[fakta]** Untuk uji, halaman Profiles menyebut token bisa dibuat lewat Graph API Explorer. Tombol "Generate Access Token" di dashboard tidak disebut **[terbuka]**.
+8. **[fakta]** Host API: `https://graph.threads.com/v1.0/` (mis. `profile_lookup`); host otorisasi `threads.com`.
+9. **[usulan]** Untuk token pertama, coba Graph API Explorer lebih dulu (tanpa redirect URI). Bila tidak mendukung, jalankan alur OAuth dengan redirect URI sederhana dan salin `code` dari address bar.
+
+## Fase 0: profile discovery (bisa dijalankan lebih dulu)
+
+Dasar: `docs/research/threads-profile-discovery.md`. Di standard access hanya akun resmi Meta (@meta, @threads, @instagram, @facebook) yang bisa dicari, jadi fase ini memakai akun tersebut. Izin yang dibutuhkan: `threads_basic` dan `threads_profile_discovery` (saat ini hanya `threads_basic` yang ditambahkan di `ads-crawler`).
+
+| # | Uji | Cara | Menjawab | Hasil |
+|---|---|---|---|---|
+| P1 | Lookup akun resmi | `GET /profile_lookup?username=threads` | token, format respons | |
+| P2 | Field yang kembali | bandingkan dengan daftar dokumentasi; catat `replies_count` ada atau tidak | inkonsistensi dokumen | |
+| P3 | Posting akun resmi | `GET /profile_posts?username=threads&limit=10` | field, `topic_tag`, `permalink` | |
+| P4 | Paginasi | ikuti `paging.cursors.after`; catat cara pakai dan batas halaman | paginasi | |
+| P5 | `since`/`until`/`limit` | coba ketiganya; catat yang diterima atau ditolak, serta `limit` maksimum | parameter tak terdokumentasi | |
+| P6 | Akun non-resmi | `profile_lookup` ke akun publik 100+ followers (bukan akun Meta) | batas standard access | |
+| P7 | Akun di bawah 100 followers | akun sendiri bila publik | batas 100 followers | |
+| P8 | Hitungan kuota | catat header rate limit sebelum dan sesudah; batas dokumentasi 1.000 per 24 jam | per app, token, atau akun | |
+
+- Kriteria: P6 gagal berarti kompetitor butuh advanced access (tahap 2 menunggu App Review). P6 berhasil berarti batas standard access tidak seketat dokumentasi.
+- Catatan: P6 hanya menyentuh profil publik dan tidak menyimpan hasilnya; jangan uji akun individu pribadi.
+
+## Skenario uji keyword_search
 
 Isi kolom hasil dengan mask. Tandai tiap hasil: fakta (teramati).
 
