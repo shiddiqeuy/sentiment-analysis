@@ -1,6 +1,6 @@
 # Sentiment Analysis Threads
 
-Riset dan perancangan sistem internal untuk menganalisis sentimen publik di Meta Threads terhadap produk dan kategori produk milik organisasi. Tahap saat ini: riset dan verifikasi akses data. Belum ada kode.
+Riset dan perancangan sistem internal untuk menganalisis sentimen publik di Meta Threads terhadap produk dan kategori produk milik organisasi. Tahap saat ini: riset dan verifikasi akses data. Kode baru berupa prototype throwaway dan skrip ekspor (lihat Perkakas).
 
 ## Scope
 
@@ -18,9 +18,40 @@ Rincian: [docs/scope-statement.md](docs/scope-statement.md).
 |---|---|
 | Riset kebutuhan, data source, arsitektur, privasi | selesai (draf) |
 | Verifikasi poin terbuka Threads API | selesai, sebagian masih terbuka |
-| Draf pertanyaan ke Meta | siap ditinjau, belum dikirim |
-| Uji empiris `keyword_search` | rencana siap, belum dijalankan |
-| Prototype pipeline | belum dimulai |
+| Draf pertanyaan ke Meta | dirapikan, belum dikirim |
+| Uji empiris Threads API | fase 0 dan sebagian `keyword_search` selesai (lihat hasil uji) |
+| Prototype pipeline | jalan pada data sintetis; belum diuji dengan data nyata |
+
+## Perkakas
+
+Python 3.14, tanpa dependensi (hanya pustaka standar). Semua perintah dari root repo.
+
+| Berkas | Fungsi |
+|---|---|
+| `tools/export_threads.py` | ekspor post dari Threads API ke `data/*.json` (di-gitignore); token dari `THREADS_TOKEN`, tidak pernah ditulis ke berkas |
+| `prototype/pipeline_proto.py` | prototype throwaway: purge, masking, normalisasi, klasifikasi lexicon, agregasi harian, evaluasi |
+| `prototype/fixture_posts.json` | 17 post sintetis berbentuk respons Threads, lengkap dengan label `gold` |
+| `.env.example` | daftar variabel lingkungan (tanpa nilai) |
+
+```powershell
+# 1. jalankan prototype pada data sintetis
+python prototype/pipeline_proto.py
+
+# 2. ekspor data nyata (token hanya di sesi shell, jangan di berkas)
+$env:THREADS_TOKEN = "..."
+python tools/export_threads.py profile --username <akun-sendiri> --limit 25 --pages 2
+
+# 3. jalankan pipeline pada data nyata (tanpa label 'gold', evaluasi dilewati)
+python prototype/pipeline_proto.py data/profile_<akun-sendiri>.json
+```
+
+Catatan:
+- `data/` dan `.env` di-gitignore. Jangan commit data nyata atau token.
+- Respons `profile_posts` memuat URL `paging.next` yang berisi token; skrip ekspor membuangnya. Jangan menyimpan respons mentah.
+- Host default `graph.threads.com` mengikuti dokumentasi; di Graph API Explorer host `graph.threads.net` terbukti bekerja. Ubah lewat `THREADS_API_BASE`.
+- Nama field di `export_threads.py` sebagian asumsi; yang terverifikasi ada di `docs/research/threads-api-test-results.md`.
+- `keyword` hanya mengembalikan post akun sendiri sebelum App Review disetujui.
+- Skrip ekspor belum pernah dijalankan terhadap API; hanya diuji bahwa ia berhenti aman tanpa token.
 
 ## Dokumen
 

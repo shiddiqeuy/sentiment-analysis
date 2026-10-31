@@ -1,0 +1,23 @@
+{
+  "_note": "PROTOTYPE: data sintetis berbentuk respons keyword_search/profile_posts. Bukan data nyata. 'gold' = label buatan tangan untuk evaluasi.",
+  "data": [
+    {"id": "p01", "username": "user_a", "timestamp": "2026-10-28T08:10:00+0000", "text": "Kopi di sini baguuus banget, recommended! @barista_x makasih ya", "topic_tag": "kopi", "gold": "positif"},
+    {"id": "p02", "username": "user_b", "timestamp": "2026-10-28T09:30:00+0000", "text": "Pelayanannya lambat banget, kecewa. Hubungi 081234567890 kalau mau komplain", "topic_tag": "kopi", "gold": "negatif"},
+    {"id": "p03", "username": "user_c", "timestamp": "2026-10-28T11:00:00+0000", "text": "Coba produk baru mereka, lumayan sih https://example.com/promo", "topic_tag": "produk", "gold": "positif"},
+    {"id": "p04", "username": "user_d", "timestamp": "2026-10-28T13:45:00+0000", "text": "Harganya mahal tapi rasanya biasa aja", "topic_tag": "kopi", "gold": "negatif"},
+    {"id": "p05", "username": "user_e", "timestamp": "2026-10-28T15:20:00+0000", "text": "Buka jam berapa ya hari ini?", "topic_tag": "kopi", "gold": "netral"},
+    {"id": "p06", "username": "user_f", "timestamp": "2026-10-29T07:05:00+0000", "text": "Tidak bagus sama sekali, mengecewakan. Email saya budi@mail.com", "topic_tag": "produk", "gold": "negatif"},
+    {"id": "p07", "username": "user_g", "timestamp": "2026-10-29T08:40:00+0000", "text": "Wah hebat banget ya, pesanan telat 2 jam. Salut deh", "topic_tag": "produk", "gold": "negatif"},
+    {"id": "p08", "username": "user_h", "timestamp": "2026-10-29T10:15:00+0000", "text": "Suka banget sama rasa barunya, mantap", "topic_tag": "kopi", "gold": "positif"},
+    {"id": "p09", "username": "user_i", "timestamp": "2026-10-29T12:00:00+0000", "text": "Rusak pas sampai, parah, gak bakal beli lagi", "topic_tag": "produk", "gold": "negatif"},
+    {"id": "p10", "username": "user_j", "timestamp": "2026-10-29T16:30:00+0000", "text": "Lagi cari kopi enak di Jakarta, ada saran?", "topic_tag": "kopi", "gold": "netral"},
+    {"id": "p11", "username": "user_k", "timestamp": "2026-10-30T06:50:00+0000", "text": "Kualitas bagus, harga murah, puas!", "topic_tag": "produk", "gold": "positif"},
+    {"id": "p12", "username": "user_l", "timestamp": "2026-10-30T09:10:00+0000", "text": "Jelek, kecewa berat. Kirim ke @cs_resmi tapi gak dibales", "topic_tag": "produk", "gold": "negatif"},
+    {"id": "p13", "username": "user_m", "timestamp": "2026-10-30T09:55:00+0000", "text": "Lambat bgt, mahal pula, nyesel", "topic_tag": "produk", "gold": "negatif"},
+    {"id": "p14", "username": "user_n", "timestamp": "2026-10-30T11:25:00+0000", "text": "Rusak lagi. Parah. Gak recommended", "topic_tag": "produk", "gold": "negatif"},
+    {"id": "p15", "username": "user_o", "timestamp": "2026-10-30T14:00:00+0000", "text": "Rasanya enak dan harganya terjangkau", "topic_tag": "kopi", "gold": "positif"},
+    {"id": "p16", "username": "user_p", "timestamp": "2026-10-30T18:35:00+0000", "text": "Info promo hari ini apa aja?", "topic_tag": "produk", "gold": "netral"},
+    {"id": "p17", "username": "user_q", "timestamp": "2026-10-30T19:20:00+0000", "text": "Postingan yang akan dihapus pengguna", "topic_tag": "kopi", "gold": "netral"}
+  ],
+  "deleted_ids": ["p17"]
+}

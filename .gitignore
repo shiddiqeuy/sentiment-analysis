@@ -1,0 +1,13 @@
+# Data nyata dari Threads dan hasil olahannya: jangan masuk repo
+data/
+*.local.json
+
+# Rahasia
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.pyc
+.venv/
